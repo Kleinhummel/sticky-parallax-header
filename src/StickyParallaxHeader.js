@@ -247,7 +247,7 @@ class StickyParallaxHeader extends Component {
       <View
         style={{
           height: backgroundHeight,
-          backgroundColor: tabsContainerBackgroundColor,
+          backgroundColor: 'green',
           ...(backgroundImage && styles.transparentBackground)
         }}
       >
