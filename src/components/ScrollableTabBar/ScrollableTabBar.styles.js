@@ -13,7 +13,8 @@ export default StyleSheet.create({
   tabContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: 32
   },
   countWrapper: {
     width: 14,
