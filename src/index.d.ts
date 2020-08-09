@@ -19,8 +19,9 @@ export interface OnChangeTabArguments {
 }
 
 export interface Tab {
+  icon?: ReactElement;
   content: ReactElement;
-  title: string;
+  title?: string;
 }
 export interface SharedProps {
   backgroundImage?: ImageSourcePropType;
@@ -37,13 +38,14 @@ export interface IconProps {
 }
 
 export interface TabsSharedProps {
-  tabTextActiveStyle: TextStyle;
-  tabTextContainerActiveStyle: ViewStyle;
-  tabTextContainerStyle: ViewStyle;
-  tabTextStyle: TextStyle;
-  tabWrapperStyle: ViewStyle;
+  tabTextActiveStyle?: TextStyle;
+  tabTextContainerActiveStyle?: ViewStyle;
+  tabTextContainerStyle?: ViewStyle;
+  tabTextStyle?: TextStyle;
+  tabWrapperStyle?: ViewStyle;
   tabs: Tab[];
-  tabsContainerStyle: ViewStyle;
+  fixedTabCount?: boolean;
+  tabsContainerStyle?: ViewStyle;
 }
 
 
@@ -58,8 +60,9 @@ export type TabbedHeaderProps = SharedProps & TabsSharedProps & {
   logoStyle?: ViewStyle;
   renderBody?: (title: string) => ReactElement;
   scrollEvent?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  title?: string;
+  title?: string | ReactElement;
   titleStyle?: TextStyle;
+  backgroundGradientColors?: string[];
 }
 
 export type DetailsHeaderProps = SharedProps & IconProps & {
