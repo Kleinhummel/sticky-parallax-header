@@ -1,20 +1,6 @@
 import React from 'react'
-import {
-  Text,
-  View,
-  Image,
-  StatusBar,
-  Animated,
-  ViewPropTypes
-} from 'react-native'
-import {
-  arrayOf,
-  bool,
-  number,
-  shape,
-  string,
-  func
-} from 'prop-types'
+import { Text, View, Image, StatusBar, Animated, ViewPropTypes } from 'react-native'
+import { arrayOf, bool, number, shape, string, func } from 'prop-types'
 import StickyParallaxHeader from '../../index'
 import { constants, colors, sizes } from '../../constants'
 import styles from './TabbedHeader.styles'
@@ -53,21 +39,11 @@ export default class TabbedHeader extends React.Component {
   }
 
   renderLogoHeader = () => {
-    const {
-      backgroundColor,
-      logo,
-      logoResizeMode,
-      logoStyle,
-      logoContainerStyle
-    } = this.props
+    const { backgroundColor, logo, logoResizeMode, logoStyle, logoContainerStyle } = this.props
 
     return (
       <View style={[logoContainerStyle, { backgroundColor }]}>
-        <Image
-          resizeMode={logoResizeMode}
-          source={logo}
-          style={logoStyle}
-        />
+        <Image resizeMode={logoResizeMode} source={logo} style={logoStyle} />
       </View>
     )
   }
@@ -152,7 +128,8 @@ export default class TabbedHeader extends React.Component {
         return marginBottom
       }
 
-      marginBottom = constants.deviceHeight - padding * 2 - sizes.headerHeight - contentHeight[title]
+      marginBottom =
+        constants.deviceHeight - padding * 2 - sizes.headerHeight - contentHeight[title]
 
       return marginBottom
     }
@@ -176,18 +153,22 @@ export default class TabbedHeader extends React.Component {
       tabTextContainerActiveStyle,
       tabWrapperStyle,
       tabsContainerStyle,
-      fixedTabCount //jkl
+      fixedTabCount, //jkl
+      onRef
     } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <StatusBar barStyle="light-content" backgroundColor={backgroundColor} translucent />
         <StickyParallaxHeader
           foreground={this.renderForeground(this.scrollY)}
           header={this.renderHeader()}
           deviceWidth={constants.deviceWidth}
           parallaxHeight={sizes.homeScreenParallaxHeader}
-          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }], { useNativeDriver: false, listener: e => scrollEvent && scrollEvent(e) })}
+          scrollEvent={event([{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }], {
+            useNativeDriver: false,
+            listener: (e) => scrollEvent && scrollEvent(e)
+          })}
           headerSize={this.setHeaderSize}
           headerHeight={headerHeight}
           tabs={tabs}
@@ -202,10 +183,11 @@ export default class TabbedHeader extends React.Component {
           snapToEdge={snapToEdge}
           tabsContainerStyle={tabsContainerStyle}
           fixedTabCount={fixedTabCount} // jkl
+          onRef={onRef}
         >
           {renderBody('Popular Quizes')}
         </StickyParallaxHeader>
-      </React.Fragment>
+      </>
     )
   }
 }
@@ -219,7 +201,7 @@ TabbedHeader.propTypes = {
   snapToEdge: bool,
   tabs: arrayOf(shape({})),
   renderBody: func,
-  logo: number,
+  logo: Image.propTypes.source,
   logoResizeMode: string,
   logoStyle: ViewPropTypes.style,
   logoContainerStyle: ViewPropTypes.style,
@@ -233,7 +215,8 @@ TabbedHeader.propTypes = {
   foregroundImage: Image.propTypes.source,
   titleStyle: Text.propTypes.style,
   header: func,
-  fixedTabCount: bool //jkl
+  fixedTabCount: bool, //jkl
+  onRef: func
 }
 
 TabbedHeader.defaultProps = {
@@ -244,10 +227,10 @@ TabbedHeader.defaultProps = {
   bounces: true,
   snapToEdge: true,
   logo: require('../../assets/images/logo.png'),
-  logoResizeMode: "contain",
+  logoResizeMode: 'contain',
   logoStyle: styles.logo,
   logoContainerStyle: styles.headerWrapper,
-  renderBody: title => <RenderContent title={title} />,
+  renderBody: (title) => <RenderContent title={title} />,
   tabs: [
     {
       title: 'Popular',
@@ -271,5 +254,6 @@ TabbedHeader.defaultProps = {
   tabTextContainerStyle: styles.tabTextContainerStyle,
   tabTextContainerActiveStyle: styles.tabTextContainerActiveStyle,
   tabWrapperStyle: styles.tabsWrapper,
-  fixedTabCount: false // jkl
+  fixedTabCount: false, // jkl
+  onRef: null
 }

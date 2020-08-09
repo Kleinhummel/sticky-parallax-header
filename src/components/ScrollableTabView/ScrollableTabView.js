@@ -4,6 +4,7 @@ import { Animated, StyleSheet, View } from 'react-native'
 import { func, node, number, shape, bool } from 'prop-types'
 import SceneComponent from './SceneComponent'
 import constants from '../../constants/constants'
+import { getSafelyScrollNode } from '../../utils'
 
 const styles = StyleSheet.create({
   container: {
@@ -76,18 +77,6 @@ class ScrollableTabView extends React.Component {
     })
   }
 
-  scrollToTop = () => {
-    const { scrollRef, scrollHeight, isHeaderFolded } = this.props
-
-    return (
-      isHeaderFolded &&
-      scrollRef.scrollTo({
-        y: scrollHeight,
-        duration: 1000
-      })
-    )
-  }
-
   updateSelectedPage = (nextPage) => {
     let localNextPage = nextPage
     if (typeof localNextPage === 'object') {
@@ -103,12 +92,18 @@ class ScrollableTabView extends React.Component {
     this.children().map((child, idx) => {
       const key = this.makeSceneKey(child, idx)
       const { currentPage, containerWidth, sceneKeys } = this.state
+      const { minScrollHeight } = this.props
 
       return (
         <SceneComponent
           key={child.key}
           shouldUpdated={this.shouldRenderSceneKey(idx, currentPage)}
-          style={{ width: containerWidth }}
+          /* eslint-disable-next-line react-native/no-inline-styles */
+          style={{
+            width: containerWidth,
+            minHeight: minScrollHeight,
+            maxHeight: idx === currentPage ? null : minScrollHeight
+          }}
         >
           {this.keyExists(sceneKeys, key) ? child : null}
         </SceneComponent>
@@ -166,8 +161,9 @@ class ScrollableTabView extends React.Component {
   goToPage = (pageNumber) => {
     const { containerWidth } = this.state
     const offset = pageNumber * containerWidth
-    if (this.scrollView) {
-      this.scrollView.scrollTo({ x: offset, y: 0, animated: true })
+    const scrollNode = getSafelyScrollNode(this.scrollView);
+    if (scrollNode) {
+      scrollNode.scrollTo({ x: offset, y: 0, animated: true })
     }
 
     const { currentPage } = this.state
@@ -175,8 +171,6 @@ class ScrollableTabView extends React.Component {
       page: pageNumber,
       callback: this.onChangeTab.bind(this, currentPage, pageNumber)
     })
-
-    this.scrollToTop()
   }
 
   onScroll = (e) => {
@@ -206,11 +200,13 @@ class ScrollableTabView extends React.Component {
     const scenes = this.composeScenes()
     const { initialPage } = this.props
     const { containerWidth, scrollXIOS } = this.state
+    const { minScrollHeight } = this.props
 
     return (
       <Animated.ScrollView
         horizontal
         pagingEnabled
+        contentContainerStyle={{ minHeight: minScrollHeight }}
         automaticallyAdjustContentInsets={false}
         contentOffset={{ x: initialPage * containerWidth }}
         ref={(scrollView) => {
@@ -250,6 +246,7 @@ ScrollableTabView.propTypes = {
   onChangeTab: func,
   swipedPage: func,
   scrollHeight: number,
+  minScrollHeight: number,
   isHeaderFolded: bool,
   scrollRef: shape({})
 }

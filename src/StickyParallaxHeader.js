@@ -1,14 +1,5 @@
 import React, { Component } from 'react'
-import {
-  arrayOf,
-  bool,
-  func,
-  node,
-  number,
-  shape,
-  string,
-  oneOfType
-} from 'prop-types'
+import { arrayOf, bool, func, node, number, shape, string, oneOfType } from 'prop-types'
 import {
   Dimensions,
   ImageBackground,
@@ -22,6 +13,7 @@ import {
 import { ScrollableTabBar, ScrollableTabView } from './components'
 import { constants } from './constants'
 import styles from './styles'
+import { getSafelyScrollNode } from './utils'
 
 const { divide, Value, createAnimatedComponent, event, timing, ValueXY } = Animated
 const AnimatedScrollView = createAnimatedComponent(ScrollView)
@@ -49,15 +41,32 @@ class StickyParallaxHeader extends Component {
   componentDidMount() {
     // eslint-disable-next-line
     this.scrollY.addListener(({ value }) => (this._value = value))
+    this.props.onRef?.(this)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { headerHeight, parallaxHeight, tabs } = this.props
+    const prevPage = prevState.currentPage
+    const { currentPage, isFolded } = this.state
+    const isRenderingTabs = tabs && tabs.length > 0
+
+    if (isRenderingTabs && prevPage !== currentPage && isFolded) {
+      const scrollHeight = Math.max(parallaxHeight, headerHeight * 2)
+      setTimeout(() => {
+        const scrollNode = getSafelyScrollNode(this.scroll)
+        scrollNode.scrollTo({ y: scrollHeight, duration: 1000 })
+      }, 250)
+    }
   }
 
   componentWillUnmount() {
     this.scrollY.removeAllListeners()
+    this.props.onRef?.(null)
   }
 
   spring = () => {
-    const scrollNode = this.scroll
-    scrollNode.getNode().scrollTo({ x: 0, y: 40, animated: true })
+    const scrollNode = getSafelyScrollNode(this.scroll)
+    scrollNode.scrollTo({ x: 0, y: 40, animated: true })
 
     return setTimeout(() => {
       setTimeout(() => {
@@ -72,7 +81,8 @@ class StickyParallaxHeader extends Component {
     const scrollHeight = snapStopThreshold || height
     const snap = snapValue || height
     const { snapToEdge } = this.props
-    const scrollNode = this.scroll
+
+    const scrollNode = getSafelyScrollNode(this.scroll)
     // eslint-disable-next-line no-underscore-dangle
     const scrollValue = this.scrollY.__getValue()
     const { y } = scrollValue
@@ -310,6 +320,9 @@ class StickyParallaxHeader extends Component {
       headerStyle.map((el) => Object.assign(arrayHeaderStyle, el))
     }
 
+    const scrollViewMinHeight = Dimensions.get('window').height + parallaxHeight - headerHeight
+    const innerScrollHeight = Dimensions.get('window').height - headerHeight - parallaxHeight
+
     const shouldRenderTabs = tabs && tabs.length > 0
 
     return (
@@ -324,6 +337,7 @@ class StickyParallaxHeader extends Component {
           ref={(c) => {
             this.scroll = c
           }}
+          contentContainerStyle={{ minHeight: scrollViewMinHeight }}
           onScrollEndDrag={() => this.onScrollEndSnapToEdge(scrollHeight)}
           scrollEventThrottle={1}
           stickyHeaderIndices={shouldRenderTabs ? [1] : []}
@@ -352,11 +366,15 @@ class StickyParallaxHeader extends Component {
               style={[
                 styles.overScrollPadding,
                 {
-                  backgroundColor: isArray ? arrayHeaderStyle.backgroundColor : headerStyle?.backgroundColor
+                  backgroundColor: isArray
+                    ? arrayHeaderStyle.backgroundColor
+                    : headerStyle?.backgroundColor
                 }
               ]}
             />
-            {backgroundImage ? this.renderImageBackground(scrollHeight) : this.renderPlainBackground(scrollHeight)}
+            {backgroundImage
+              ? this.renderImageBackground(scrollHeight)
+              : this.renderPlainBackground(scrollHeight)}
             {this.renderForeground(scrollHeight)}
           </View>
           {shouldRenderTabs && this.renderTabs()}
@@ -369,6 +387,7 @@ class StickyParallaxHeader extends Component {
             scrollRef={this.scroll}
             scrollHeight={scrollHeight}
             isHeaderFolded={isFolded}
+            minScrollHeight={innerScrollHeight}
           >
             {!tabs && children}
             {tabs &&
@@ -419,7 +438,8 @@ StickyParallaxHeader.propTypes = {
   snapStopThreshold: oneOfType([bool, number]),
   snapValue: oneOfType([bool, number]),
   transparentHeader: bool,
-  fixedTabCount: bool //jkl
+  fixedTabCount: bool, //jkl
+  onRef: func
 }
 
 StickyParallaxHeader.defaultProps = {
@@ -437,7 +457,8 @@ StickyParallaxHeader.defaultProps = {
   snapStartThreshold: false,
   snapStopThreshold: false,
   snapValue: false,
-  transparentHeader: false
+  transparentHeader: false,
+  onRef: null
 }
 
 export default StickyParallaxHeader
