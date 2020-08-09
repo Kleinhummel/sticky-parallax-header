@@ -22,7 +22,6 @@
 # Introduction 
 
 <p align="center">
-  This is an old fork project that I don't contribute to anymore
   Stickyheader.js is a simple React Native library, enabling to create a fully custom header for your iOS and Android apps.
 </p>
 
