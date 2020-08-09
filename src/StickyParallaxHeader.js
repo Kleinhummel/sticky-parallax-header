@@ -256,9 +256,9 @@ class StickyParallaxHeader extends Component {
     const { foreground, tabsContainerBackgroundColor, backgroundImage } = this.props
     if (this.props.backgroundGradientColors)
       return (
-        <LinearGradient colors={this.props.backgroundGradientColors} style={{ flex: 1, marginTop: Constants.statusBarHeight }}>
+        <LinearGradient colors={this.props.backgroundGradientColors} style={{ flex: 1 }} >
           {foreground}
-        </LinearGradient>
+        </ LinearGradient>
       )
     else
       return (
