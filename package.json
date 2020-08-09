@@ -10,6 +10,7 @@
     "release": "release-it"
   },
   "dependencies": {
+    "expo-linear-gradient": "^8.2.1",
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {

@@ -11,7 +11,6 @@ const { event, ValueXY } = Animated
 export default class TabbedHeader extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       contentHeight: {},
       headerLayout: {
@@ -154,12 +153,13 @@ export default class TabbedHeader extends React.Component {
       tabWrapperStyle,
       tabsContainerStyle,
       fixedTabCount, //jkl
+      backgroundGradientColors,
       onRef
     } = this.props
 
     return (
       <>
-        <StatusBar barStyle="light-content" backgroundColor={backgroundColor} translucent />
+        <StatusBar barStyle="light-content" backgroundColor={!!backgroundGradientColors ? backgroundGradientColors[0] : backgroundColor} translucent />
         <StickyParallaxHeader
           foreground={this.renderForeground(this.scrollY)}
           header={this.renderHeader()}
@@ -183,6 +183,7 @@ export default class TabbedHeader extends React.Component {
           snapToEdge={snapToEdge}
           tabsContainerStyle={tabsContainerStyle}
           fixedTabCount={fixedTabCount} // jkl
+          backgroundGradientColors={backgroundGradientColors}
           onRef={onRef}
         >
           {renderBody('Popular Quizes')}
@@ -216,6 +217,7 @@ TabbedHeader.propTypes = {
   titleStyle: Text.propTypes.style,
   header: func,
   fixedTabCount: bool, //jkl
+  backgroundGradientColors: arrayOf(string),
   onRef: func
 }
 

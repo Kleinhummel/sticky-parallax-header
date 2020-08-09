@@ -14,6 +14,8 @@ import { ScrollableTabBar, ScrollableTabView } from './components'
 import { constants } from './constants'
 import styles from './styles'
 import { getSafelyScrollNode } from './utils'
+import { LinearGradient } from 'expo-linear-gradient'
+import Constants from 'expo-constants'
 
 const { divide, Value, createAnimatedComponent, event, timing, ValueXY } = Animated
 const AnimatedScrollView = createAnimatedComponent(ScrollView)
@@ -252,18 +254,25 @@ class StickyParallaxHeader extends Component {
 
   renderForeground = (backgroundHeight) => {
     const { foreground, tabsContainerBackgroundColor, backgroundImage } = this.props
+    if (this.props.backgroundGradientColors)
+      return (
+        <LinearGradient colors={this.props.backgroundGradientColors} style={{ flex: 1, marginTop: Constants.statusBarHeight }}>
+          {foreground}
+        </LinearGradient>
+      )
+    else
+      return (
+        <View
+          style={{
+            height: backgroundHeight,
+            backgroundColor: tabsContainerBackgroundColor,
+            ...(backgroundImage && styles.transparentBackground)
+          }}
+        >
+          {foreground}
 
-    return (
-      <View
-        style={{
-          height: backgroundHeight,
-          backgroundColor: tabsContainerBackgroundColor,
-          ...(backgroundImage && styles.transparentBackground)
-        }}
-      >
-        {foreground}
-      </View>
-    )
+        </View>
+      )
   }
 
   renderTabs = () => {
@@ -276,7 +285,8 @@ class StickyParallaxHeader extends Component {
       tabsContainerBackgroundColor,
       tabWrapperStyle,
       tabsContainerStyle,
-      fixedTabCount //jkl
+      fixedTabCount, //jkl
+      backgroundGradientColors
     } = this.props
     const { scrollValue, currentPage, containerWidth } = this.state
 
@@ -289,7 +299,7 @@ class StickyParallaxHeader extends Component {
       tabTextContainerActiveStyle,
       tabTextContainerStyle,
       tabTextStyle,
-      tabsContainerBackgroundColor,
+      tabsContainerBackgroundColor: !!backgroundGradientColors ? backgroundGradientColors[1] : tabsContainerBackgroundColor,
       tabs,
       tabWrapperStyle,
       tabsContainerStyle,
