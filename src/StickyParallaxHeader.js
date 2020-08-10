@@ -401,10 +401,10 @@ class StickyParallaxHeader extends Component {
           >
             {!tabs && children}
             {tabs &&
-              tabs.map((item) => (
+              tabs.map((item, index) => (
                 <View
                   tabLabel={item.title}
-                  key={item.title}
+                  key={item.title || index}
                   onLayout={this.setContentHeight}
                   ref={(c) => {
                     this.tab = c

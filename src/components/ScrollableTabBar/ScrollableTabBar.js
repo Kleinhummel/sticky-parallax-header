@@ -129,7 +129,7 @@ class ScrollableTabBar extends React.PureComponent {
 
             return (
               <TouchableOpacity
-                key={tab.title}
+                key={tab.title || page}
                 accessible
                 style={[tabWrapperStyle, fixedTabCount && styles.tabWrapperFixedTabCount]} //jkl
                 accessibilityLabel={tab.title}
