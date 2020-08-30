@@ -58,11 +58,11 @@ export type TabbedHeaderProps = SharedProps & TabsSharedProps & {
   logoContainerStyle?: ViewStyle;
   logoResizeMode?: ImageResizeMode;
   logoStyle?: ViewStyle;
+  rememberTabScrollPosition?: boolean;
   renderBody?: (title: string) => ReactElement;
   scrollEvent?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  title?: string | ReactElement;
+  title?: string;
   titleStyle?: TextStyle;
-  backgroundGradientColors?: string[];
 }
 
 export type DetailsHeaderProps = SharedProps & IconProps & {
